@@ -1,5 +1,6 @@
 let model = null;
 let cameraStream = null;
+const VALID_CONFIDENCE_THRESHOLD = 0.5;
 
 const els = {};
 
@@ -36,12 +37,22 @@ function setLoading(loading) {
 function setPrediction(digit, confidence) {
   if (digit === null || digit === undefined) {
     els.predDigit.textContent = "—";
+    els.predDigit.className =
+      "mt-1 text-6xl font-bold tracking-tight text-slate-900";
     els.confText.textContent = "—";
     els.confBar.style.width = "0%";
     return;
   }
-  els.predDigit.textContent = String(digit);
   const pct = Math.max(0, Math.min(1, confidence)) * 100;
+  if (confidence < VALID_CONFIDENCE_THRESHOLD) {
+    els.predDigit.textContent = "Not a valid handwritten number";
+    els.predDigit.className =
+      "mt-2 text-base font-semibold leading-snug text-slate-700";
+  } else {
+    els.predDigit.textContent = String(digit);
+    els.predDigit.className =
+      "mt-1 text-6xl font-bold tracking-tight text-slate-900";
+  }
   els.confText.textContent = `${pct.toFixed(1)}%`;
   els.confBar.style.width = `${pct.toFixed(1)}%`;
 }
@@ -75,7 +86,7 @@ async function ensureTfReady() {
 async function loadModel() {
   setModelStatus("Loading model…", false);
   await ensureTfReady();
-  model = await tf.loadLayersModel("./model/model.json");
+  model = await tf.loadLayersModel("/model/model.json");
   setModelStatus("Model ready", true);
 }
 

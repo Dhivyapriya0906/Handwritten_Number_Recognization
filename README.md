@@ -1,27 +1,21 @@
-# Handwriting Recognition AI (Vercel-ready)
+# Handwritten Number Recognition
 
-A **pure frontend** handwriting recognition web app that runs fully in the browser using **TensorFlow.js**.
+Handwritten Number Recognition is a **fully static AI web app** built with HTML, TailwindCSS, JavaScript, and TensorFlow.js.  
+It runs completely in the browser (no backend), supports image upload and camera capture, and predicts handwritten digits (0-9).
 
 ## Features
 
-- Upload an image of a handwritten digit
-- Capture from camera using `navigator.mediaDevices.getUserMedia()`
-- Preprocess to **28×28 grayscale** (MNIST-style)
-- Predict **0–9** with a confidence score
-- Loading spinner while predicting
-- Clean responsive UI (TailwindCSS via CDN)
+- Browser-only digit prediction with TensorFlow.js
+- Upload image and camera capture (`getUserMedia`)
+- Image preprocessing to 28x28 grayscale
+- Predicted digit + confidence score
+- Clean, minimal, responsive UI
 
-## Project structure
+## Final project structure
 
-```
-handwriting-recognition/
+```text
+Handwritten_Number_Recognition/
 ├── index.html
-├── vercel.json
-├── package.json
-├── public/
-│   ├── style.css
-│   ├── script.js
-│   └── assets/
 ├── model/
 │   ├── model.json
 │   ├── group1-shard1of1
@@ -29,40 +23,56 @@ handwriting-recognition/
 │   ├── group3-shard1of2
 │   ├── group3-shard2of2
 │   └── group4-shard1of1
+├── public/
+│   ├── script.js
+│   └── style.css
+├── package.json
 └── README.md
 ```
 
-Note: TensorFlow.js models can store weights as multiple shard files (instead of a single `weights.bin`). The app loads `./model/model.json`, which references the shard files in `model/`.
+Note: The TensorFlow.js model uses multiple weight shard files referenced by `model/model.json`.
+
+## Production-safe paths used
+
+- CSS: `/public/style.css`
+- JS: `/public/script.js`
+- Model: `/model/model.json`
+
+These absolute root paths make deployment stable on Vercel static hosting.
 
 ## Run locally
 
-Open `index.html` directly OR run a simple static server:
+Use any static server from project root:
 
 ```bash
-cd handwriting-recognition
 npm run dev
 ```
 
-## Deploy to Vercel (no backend)
+Or open `index.html` directly in a browser (camera permissions can be more reliable through a local server).
 
-### Option A: Deploy from GitHub (recommended)
+## Deploy on Vercel (Static, No Backend)
 
-- Push this folder to a GitHub repository.
-- In Vercel, click **Add New → Project** and import the repo.
-- **Framework Preset**: Other
-- **Build Command**: leave empty
-- **Output Directory**: `.` (project root)
-- Deploy.
+### Option 1: Vercel Dashboard
 
-### Option B: Vercel CLI
+1. Push project to GitHub.
+2. In Vercel, click **Add New -> Project**.
+3. Import your repository.
+4. Framework preset: **Other**.
+5. Build command: leave empty.
+6. Output directory: leave empty (root static files).
+7. Deploy.
+
+### Option 2: Vercel CLI
 
 ```bash
-cd handwriting-recognition
 npx vercel
 ```
 
-## Notes for best accuracy
+When prompted, keep defaults for a static project.
 
-- Try to keep the digit centered and high-contrast.
-- The preprocessing auto-inverts images when it detects a bright background (common for photos of black ink on white paper).
+## Why this fixes Vercel 404 issues
+
+- `index.html` is at the root and acts as the entry point.
+- No custom rewrite config is used, so Vercel serves static files directly.
+- Model and asset paths are rooted from `/`, so they resolve correctly in production.
 
